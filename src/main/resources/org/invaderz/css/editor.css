@@ -1,0 +1,45 @@
+.codeField {
+    -fx-text-fill: white;
+    -fx-background-color:  transparent;
+    -fx-background-radius: 0;
+}
+
+.rowID {
+    -fx-text-fill: #546E7A;
+}
+
+.string {
+    -fx-text-fill: #c3e88d;
+}
+
+.operator {
+    -fx-text-fill: #89ddff;
+}
+
+.comment {
+    -fx-text-fill: #546e7a;
+}
+
+.attribute {
+    -fx-text-fill: #ffcb6b;
+}
+
+.operator {
+    -fx-text-fill: #89ddff;
+}
+
+.keyword {
+    -fx-text-fill: #c792ea;
+}
+
+.method {
+    -fx-text-fill: #82aaff;
+}
+
+.randomized .text {
+    -fx-underline: true;
+}
+
+#selectedRow {
+    -fx-background-color: #313f46;
+}

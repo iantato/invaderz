@@ -1,0 +1,7 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "css.lint.vendorPrefix": "ignore",
+    "java.project.sourcePaths": [
+        "src"
+    ]
+}
