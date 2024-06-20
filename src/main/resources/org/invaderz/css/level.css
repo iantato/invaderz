@@ -1,6 +1,7 @@
 
 .button {
-    -fx-padding: 5;
+    -fx-padding: 5 5 5 30;
+    -fx-text-fill: white;
     -fx-background-color: #192227;
     -fx-alignment: center-left;
     -fx-text-alignment: left;

@@ -20,7 +20,9 @@ public class App extends Application {
 
         IDE ide = IDE.getInstance("ian", "JAVA", "TESTS");
 
+        // ChapterSelector chaptSelector = ChapterSelector.getInstance("ian");
         scene = new Scene(ide, 640, 480);
+
         stage.setScene(scene);
         stage.show();
     }

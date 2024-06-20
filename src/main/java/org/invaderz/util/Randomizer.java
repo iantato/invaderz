@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import javafx.scene.control.TextField;
+
 public class Randomizer {
     
     int minRandom = 2;
@@ -18,7 +20,8 @@ public class Randomizer {
     private static String SPECIAL_CHARACTERS = "!@$%*-_+:";
     private static final String ALL_CHARACTERS = ALPHABET + CAPITAL_ALPHABETS + NUMBERS + SPECIAL_CHARACTERS;
 
-    HashMap<String, String> randomizedContainer = new HashMap<String, String>();
+    static HashMap<TextField, String> nodesStorage = new HashMap<TextField, String>();
+    static HashMap<String, String> randomizedContainer = new HashMap<String, String>();
 
     public Randomizer getInstance() {
         return this;
@@ -56,8 +59,8 @@ public class Randomizer {
                         randomizedWord += ALL_CHARACTERS.charAt(rand.nextInt(ALL_CHARACTERS.length()));
                     }
 
-                    parsedQuestion[i] = randomizedWord;
                     randomizedContainer.put(randomizedWord, parsedQuestion[i]);
+                    parsedQuestion[i] = randomizedWord;
 
                     currentRandomized++;
 
@@ -82,5 +85,31 @@ public class Randomizer {
 
     public int getCurrentRandomized() {
         return this.currentRandomized;
+    }
+
+    public static void addRandomizedNode(TextField node, String correction) {
+        nodesStorage.put(node, correction);
+    }
+
+    public static void clearRandomizedNode() {
+        nodesStorage.clear();
+    }
+
+    public static void clearRandomizedCorrections() {
+        randomizedContainer.clear();
+    }
+
+    public static HashMap<TextField, String> getRandomizedNodes() {
+        return nodesStorage;
+    }
+
+    public static boolean checkRandomizedCorrection(String userInput, String randomized) {
+        String answer = randomizedContainer.get(randomized);
+
+        if (userInput.equals(answer)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

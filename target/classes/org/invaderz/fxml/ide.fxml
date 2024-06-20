@@ -90,30 +90,38 @@
                         </AnchorPane>
                       <AnchorPane maxHeight="300.0" minHeight="60.0" minWidth="0.0" prefHeight="120.0" prefWidth="160.0">
                            <children>
-                              <ScrollPane id="terminal" fitToHeight="true" fitToWidth="true" layoutX="-53.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <Pane maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #192227;" styleClass="terminalTop" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="12.0" text="TERMINAL" textFill="WHITE">
+                                       <font>
+                                          <Font name="Inter Regular" size="12.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Line endX="-41.0" layoutX="115.0" layoutY="30.0" startX="-100.0" stroke="#66a19d" />
+                                 </children>
+                                 <cursor>
+                                    <Cursor fx:constant="DEFAULT" />
+                                 </cursor>
+                              </Pane>
+                              <ScrollPane id="terminal" fitToHeight="true" fitToWidth="true" layoutX="-53.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                                  <content>
-                                    <VBox prefHeight="200.0" prefWidth="100.0">
-                                       <children>
-                                          <Pane prefHeight="40.0" prefWidth="200.0">
-                                             <children>
-                                                <Label layoutX="14.0" layoutY="12.0" text="TERMINAL" textFill="WHITE">
-                                                   <font>
-                                                      <Font name="Inter Regular" size="12.0" />
-                                                   </font>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </Label>
-                                                <Line endX="-41.0" layoutX="115.0" layoutY="30.0" startX="-100.0" stroke="#66a19d" />
-                                             </children>
-                                             <cursor>
-                                                <Cursor fx:constant="DEFAULT" />
-                                             </cursor>
-                                          </Pane>
-                                       </children>
+                                    <VBox fx:id="terminalStorage" prefHeight="200.0" prefWidth="100.0">
                                        <cursor>
                                           <Cursor fx:constant="TEXT" />
                                        </cursor>
+                                       <children>
+                                          <Label fx:id="outputLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textFill="WHITE" wrapText="true">
+                                             <font>
+                                                <Font name="Inter Regular" size="12.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets left="15.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                       </children>
                                     </VBox>
                                  </content>
                               </ScrollPane>

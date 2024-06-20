@@ -1,10 +1,13 @@
 package org.invaderz.controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.invaderz.App;
+import org.invaderz.nodes.ChapterButton;
 import org.invaderz.nodes.CodeRow;
 import org.invaderz.nodes.LevelButton;
 import org.invaderz.util.Database;
@@ -14,7 +17,8 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -28,20 +32,17 @@ public class IDE extends AnchorPane {
     private String username;
     private String language;
 
-    private String chapter;
-
     private HashMap<Integer, String> problems;
     private ArrayList<CodeRow> rowBuffer = new ArrayList<CodeRow>();
 
     @FXML private AnchorPane explorerAnchor;
     @FXML private VBox explorerStorage;
     @FXML private VBox editorStorage;
-    @FXML private ScrollPane editorScroll;
+    @FXML private Label outputLabel;
 
-    public IDE(String username, String language, String chapter) throws IOException {
+    public IDE(String username, String language) throws IOException {
         this.username = username;
         this.language = language;
-        this.chapter = chapter;
         
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("fxml/ide.fxml"));
         fxmlLoader.setRoot(this);
@@ -52,7 +53,8 @@ public class IDE extends AnchorPane {
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
-            this.loadLevels(language, chapter);
+            // this.loadLevels(language, chapter);
+            this.loadChapters(language);
         });
     }
 
@@ -93,62 +95,37 @@ public class IDE extends AnchorPane {
     @FXML
     public void runCode(MouseEvent mouseEvent) {
         
-    }
-
-    public static IDE getInstance(String username, String language, String chapter) throws IOException {
-        if (instance == null) {
-            instance = new IDE(username, language, chapter);
-        }
-        
-        return instance;
-    }
-
-    public static IDE getInstance() {
-        return instance;
-    }
-
-    protected void loadLevels(String language, String chapter) {
-
-        Task<ArrayList<LevelButton>> task = new Task<ArrayList<LevelButton>>() {
+        Task<Boolean> task = new Task<Boolean>() {
             @Override
-            protected ArrayList<LevelButton> call() throws Exception {
+            protected Boolean call() throws Exception {
 
-                
-                int lastUnlocked = -1;
-                ArrayList<LevelButton> levelButtonArray = new ArrayList<LevelButton>();
-                
-                problems = Database.fetchAllQuestions(language, chapter);
-                ArrayList<Integer> questionKeys = new ArrayList<Integer>(problems.keySet());
+                if (!Randomizer.getRandomizedNodes().isEmpty() && !isLoading) {
 
-                for (int i = 0; i < questionKeys.size(); i++) {
-                    
-                    int level = i + 1;
-                    if (Database.checkUnlocked(username, questionKeys.get(i))) {
-                        lastUnlocked = i;
+
+                    for (Map.Entry<TextField,String> entry : Randomizer.getRandomizedNodes().entrySet()) {
+
+                        TextField node = entry.getKey();
+                        String randomizedCounterPart = entry.getValue();
+
+                        if (!Randomizer.checkRandomizedCorrection(node.getText(), randomizedCounterPart)) {
+                            return false;
+                        }
+
                     }
 
-                    LevelButton levelButton = new LevelButton(questionKeys.get(i), 
-                                                              level, 
-                                                              Database.checkUnlocked(username, questionKeys.get(i)));
-                    
-                    levelButton.setPrefWidth(explorerAnchor.getMaxWidth());
-
-                    levelButtonArray.add(levelButton);
+                    return true;
                 }
 
-                LevelButton levelButton = levelButtonArray.get(lastUnlocked + 1);
-                levelButton.getStyleClass().remove("locked");
-                levelButton.setUnlocked(true);
-                levelButton.getStyleClass().add("unfinished");
-
-
-                return levelButtonArray;
-            } 
+                return null;
+            }
         };
 
         task.setOnSucceeded(evt -> {
-            ArrayList<LevelButton> levelButtonArray = task.getValue();
-            explorerStorage.getChildren().addAll(levelButtonArray);
+            try {
+                addTerminalInput(task.getValue());
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         });
 
         task.setOnFailed(evt -> {
@@ -156,6 +133,71 @@ public class IDE extends AnchorPane {
         });
 
         new Thread(task).start();
+    }
+
+    public static IDE getInstance(String username, String language, String chapter) throws IOException {
+        if (instance == null) {
+            instance = new IDE(username, language);
+        }
+    
+        return instance;
+    }
+
+    public static IDE getInstance() {
+        return instance;
+    }
+
+    protected void loadChapters(String language) {
+       
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    
+                    ArrayList<String> chapters = Database.fetchAllChapters(language);
+
+                    for (int i = 0; i < chapters.size(); i++) {
+                        VBox chapterStorage = new VBox();
+                        chapterStorage.setMaxWidth(Double.MAX_VALUE);
+                        chapterStorage.setFillWidth(true);
+
+                        ChapterButton chapterButton = new ChapterButton(i, username, chapters.get(i), language);
+
+                        chapterStorage.getChildren().add(chapterButton);
+
+                        Platform.runLater(() -> {
+                            explorerStorage.getChildren().add(chapterStorage);
+                        });
+                    }
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+
+            }
+        };
+
+        new Thread(task).start();
+
+
+
+    }
+
+    public void unlockNextLevel() throws SQLException {
+        
+        VBox levelStorage = (VBox) lookup("#selectedLevel").getParent();
+        int currentLevelIndex = levelStorage.getChildren().indexOf(levelStorage.lookup("#selectedLevel"));
+        LevelButton currentLevel = (LevelButton) levelStorage.lookup("#selectedLevel");
+        if (!currentLevel.checkUnlocked()) {
+            currentLevel.setFinished(username);
+        }
+
+        LevelButton nextLevel = (LevelButton) levelStorage.getChildren().get(currentLevelIndex + 1);
+        if (!nextLevel.checkUnlocked()) {
+            nextLevel.setUnlocked(true);
+        }
     }
 
     public void loadCode(int question_id) {
@@ -168,6 +210,8 @@ public class IDE extends AnchorPane {
                 rowBuffer.clear();
 
                 Randomizer randomizer = new Randomizer();
+                Randomizer.clearRandomizedCorrections();
+                Randomizer.clearRandomizedNode();
                 String question = problems.get(question_id);
 
                 try {
@@ -210,13 +254,31 @@ public class IDE extends AnchorPane {
         }
     }
 
+    public void addTerminalInput(Boolean output) throws SQLException {
+
+        if (output == null) {
+            outputLabel.setText("ERROR! File might not be fully loaded.");
+            outputLabel.setId("errorOutput");
+        } else if (output) {
+            outputLabel.setText("SUCCESS! Please proceed to the next level.");
+            outputLabel.setId("successOutput");
+            unlockNextLevel();
+
+        } else {
+            outputLabel.setText("ERROR! Please check again.");
+            outputLabel.setId("errorOutput");
+        }
+    }
+
     public boolean getIfLoading() {
         return isLoading;
     }
 
-    public ScrollPane getEditorScroll() {
-        return editorScroll;
+    public AnchorPane getExplorerAnchor() {
+        return explorerAnchor;
     }
 
-
+    public void setProblems(HashMap<Integer, String> problems) {
+        this.problems = problems;
+    }
 }

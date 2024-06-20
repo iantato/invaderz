@@ -159,7 +159,7 @@ public class Database {
 
         Connection connection = connect();
         
-        String sql = "INSERT INTO User (username, password, money) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Users (username, password, money) VALUES (?, ?, ?)";
         PreparedStatement pstmt = connection.prepareStatement(sql);
 
         pstmt.setString(1, username);
@@ -204,7 +204,7 @@ public class Database {
         disconnect(connection);
     }
 
-    public static void insertSave(String username, int question_id, String time) throws SQLException {
+    public static void saveProgress(String username, int question_id, String time) throws SQLException {
 
         Connection connection = connect();
 
@@ -329,7 +329,7 @@ public class Database {
         if (!rs.isBeforeFirst()) {
             disconnect(connection);
             return false;
-        } else {
+        } else {    
             disconnect(connection);
             return true;
         }
@@ -401,8 +401,98 @@ public class Database {
             removables[i] = removables[i].trim();
         }
 
+        disconnect(connection);
         return removables;
     }
+
+    public static ArrayList<String> fetchLanguages() throws SQLException {
+
+        Connection connection = connect();
+
+        String sql = "SELECT DISTINCT language FROM Questions";
+        Statement stmt = connection.createStatement();
+
+        ArrayList<String> languages = new ArrayList<String>();
+        ResultSet rs = stmt.executeQuery(sql);
+
+        while (rs.next()) {
+            languages.add(rs.getString("language"));
+        }
+
+        disconnect(connection);
+        return languages;
+
+    }
+
+    public static ArrayList<String> fetchAllChapters(String language) throws SQLException {
+
+        Connection connection = connect();
+
+        String sql = "SELECT DISTINCT chapter FROM Questions WHERE language = ?";
+        PreparedStatement pstmt = connection.prepareStatement(sql);
+
+        pstmt.setString(1, language);
+
+        ArrayList<String> chapters = new ArrayList<String>();
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            chapters.add(rs.getString("chapter"));
+        }
+
+        disconnect(connection);
+        return chapters;
+    }
+
+    // public static int calcCompletedCount(String username) throws SQLException {
+
+    //     Connection connection = connect();
+
+    //     String sql = "SELECT save_id FROM Saves WHERE username = ?";
+    //     PreparedStatement pstmt = connection.prepareStatement(sql);
+
+    //     pstmt.setString(1, username);
+
+    //     int completed = 0;
+    //     ResultSet rs = pstmt.executeQuery();
+
+    //     while (rs.next()) {
+    //         completed++;
+    //     }
+
+    //     disconnect(connection);
+    //     return completed + 1;
+
+    // }
+
+    // public static int getTotalLevels() throws SQLException {
+
+    //     Connection connection = connect();
+
+    //     String sql = "SELECT question_id FROM Questions";
+    //     Statement stmt = connection.createStatement();
+
+    //     int totalLevels = 0;
+    //     ResultSet rs = stmt.executeQuery(sql);
+
+    //     while (rs.next()) {
+    //         totalLevels++;
+    //     }
+
+    //     disconnect(connection);
+    //     return totalLevels;
+
+    // }
+
+    // public static int calcTotalLevels() throws SQLException {
+
+    //     Connection connection = connect();
+
+
+        
+    //     disconnect(connection);
+
+    // }
 
     /*
      * RANDOM ADDITIONAL METHODS
@@ -593,9 +683,14 @@ class GFG {
             // Database.insertCategory("JAVA", "9", "number", "TESTS");
 
             // Database.insertQuestion("JAVA", "TESTS", problem, new String[] {"Scanner", "int", "."}, 1000);
+            // Database.insertQuestion("JAVA", "TESTS", problem, new String[] {"Scanner", "int", "."}, 1000);
+            // Database.insertQuestion("JAVA", "TESTS", problem, new String[] {"Scanner", "int", "."}, 1000);
+            // Database.insertQuestion("JAVA", "TESTS", problem, new String[] {"Scanner", "int", "."}, 1000);
+            // Database.insertQuestion("JAVA", "TESTS", problem, new String[] {"Scanner", "int", "."}, 1000);
 
             System.out.println( Arrays.toString(Database.fetchRemovables(1)));;
 
+            // Database.insertUser("iantato", "fsjfnsdffs", 0);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

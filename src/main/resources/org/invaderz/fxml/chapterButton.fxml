@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+
+
+<fx:root maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#openFolder" prefHeight="30.0" prefWidth="100.0" styleClass="close" stylesheets="@../css/chapter.css" type="Button" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <graphic>
+      <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="13.0" prefWidth="15.0" styleClass="icon" />
+   </graphic>
+   <font>
+      <Font name="System Bold" size="12.0" />
+   </font>
+</fx:root>

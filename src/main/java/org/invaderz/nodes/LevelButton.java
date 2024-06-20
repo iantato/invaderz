@@ -1,9 +1,11 @@
 package org.invaderz.nodes;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.invaderz.App;
 import org.invaderz.controller.IDE;
+import org.invaderz.util.Database;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,14 +35,28 @@ public class LevelButton extends Button {
 
     public void setUnlocked(boolean unlocked) {
         if (unlocked) {
+            getStyleClass().remove("locked");
             getStyleClass().add("unlocked");
         } else {
+            getStyleClass().remove("unlocked");
             getStyleClass().add("locked");
         }
 
         this.unlocked = unlocked;
     }
 
+    public void setFinished(String username) throws SQLException {
+        this.finished = true;
+        setUnlocked(this.finished);
+        getStyleClass().remove("unfinished");
+
+        Database.saveProgress(username, question_id, "0");
+    }
+
+    public boolean checkUnlocked() {
+        return unlocked;
+    }
+ 
     @FXML
     public void setState(ActionEvent e) {
         if (unlocked) {

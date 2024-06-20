@@ -120,18 +120,6 @@ public class CodeRow extends HBox {
                 codeNode.setPrefWidth(getTextMeasure(word) + 0.5);
                 codeNode.setMinWidth(getTextMeasure(word) + 0.5);
                 codeNode.getStyleClass().add("codeField");
-                codeNode.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        setSelectedRow(mouseEvent);
-                    }
-                });
-
-                String style = parser.getStyleCategory(word);
-                if (style.equals("variable") && i < line.size() - 1) {
-                    style = parser.checkMethod(line.get(i + 1));
-                }
-                codeNode.getStyleClass().add(style);
                 codeNode.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent keyEvent) {
@@ -149,7 +137,7 @@ public class CodeRow extends HBox {
                                 if (caretPosition == 0 && getChildren().indexOf(codeNode) != 2) {
                                     TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
                                     prevNode.requestFocus();
-                                    prevNode.positionCaret(prevNode.getText().length());
+                                    prevNode.positionCaret(prevNode.getText().length() - 1);
                                 }
 
                                 break;
@@ -162,7 +150,7 @@ public class CodeRow extends HBox {
                                     
                                     TextField nextNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) + 1);
                                     nextNode.requestFocus();
-                                    nextNode.positionCaret(0);
+                                    nextNode.positionCaret(1);
                                 }
 
                                 break;
@@ -197,15 +185,34 @@ public class CodeRow extends HBox {
                                 }
 
                                 break;
-
+                            
                             default:
-                                keyEvent.consume();
+
+                                if (!randomizer.checkRandomString(word)) {
+                                    keyEvent.consume();
+                                }
                                 break;
                         }
                     }
                 });
 
+                codeNode.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        setSelectedRow(mouseEvent);
+                    }
+                });
+
+                String style = parser.getStyleCategory(word);
+                if (style.equals("variable") && i < line.size() - 1) {
+                    style = parser.checkMethod(line.get(i + 1));
+                }
+                codeNode.getStyleClass().add(style);
+
                 if (randomizer.checkRandomString(word)) {
+
+                    Randomizer.addRandomizedNode(codeNode, word);
+
                     codeNode.setFont(Font.font("Inter", FontWeight.BOLD, FontPosture.REGULAR, 16));
                     codeNode.getStyleClass().add("randomized");
                     codeNode.setPrefWidth(getBoldTextMeasure(word));
