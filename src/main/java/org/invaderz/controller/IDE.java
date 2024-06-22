@@ -14,6 +14,8 @@ import org.invaderz.util.Database;
 import org.invaderz.util.Randomizer;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,18 +29,19 @@ public class IDE extends AnchorPane {
     
     private static IDE instance;
     private final int SLEEP_MS = 100;
-    private boolean isLoading = false;
+    private BooleanProperty isLoading = new SimpleBooleanProperty(false);
 
     private String username;
     private String language;
+    private int loadedCode = -1;
 
     private HashMap<Integer, String> problems;
-    private ArrayList<CodeRow> rowBuffer = new ArrayList<CodeRow>();
 
     @FXML private AnchorPane explorerAnchor;
     @FXML private VBox explorerStorage;
     @FXML private VBox editorStorage;
     @FXML private Label outputLabel;
+    @FXML private Label stateDisplay;
 
     public IDE(String username, String language) throws IOException {
         this.username = username;
@@ -48,48 +51,30 @@ public class IDE extends AnchorPane {
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
         fxmlLoader.load();
+
     }
     
     @FXML
     public void initialize() {
+
+        isLoading.addListener((obs, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if (newValue) {
+                    stateDisplay.setText("Loading...");
+                } else {
+                    stateDisplay.setText("");
+                }
+            });
+        });
+
         Platform.runLater(() -> {
-            // this.loadLevels(language, chapter);
             this.loadChapters(language);
         });
     }
 
     @FXML
-    public void resetEditor(MouseEvent mouseEvent) {
-        
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-
-                isLoading = true;
-
-                try {
-                    for (CodeRow codeRow : rowBuffer) {
-                        Thread.sleep(SLEEP_MS);
-
-                        Platform.runLater(() -> {
-                            editorStorage.getChildren().add(codeRow);
-                        });
-
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println(e.getMessage());
-                } finally {
-                    isLoading = false;
-                }
-            }
-        };
-        
-        if (!isLoading) {
-
-            editorStorage.getChildren().clear();
-            new Thread(task).start();
-
-        }
+    public void rerandomize(MouseEvent mouseEvent) {
+        if (loadedCode != -1) loadCode(loadedCode);
     }
 
     @FXML
@@ -99,7 +84,7 @@ public class IDE extends AnchorPane {
             @Override
             protected Boolean call() throws Exception {
 
-                if (!Randomizer.getRandomizedNodes().isEmpty() && !isLoading) {
+                if (!Randomizer.getRandomizedNodes().isEmpty() && !isLoading.getValue()) {
 
 
                     for (Map.Entry<TextField,String> entry : Randomizer.getRandomizedNodes().entrySet()) {
@@ -181,8 +166,6 @@ public class IDE extends AnchorPane {
 
         new Thread(task).start();
 
-
-
     }
 
     public void unlockNextLevel() throws SQLException {
@@ -206,8 +189,7 @@ public class IDE extends AnchorPane {
             @Override
             public void run() {
 
-                isLoading = true;
-                rowBuffer.clear();
+                isLoading.setValue(true);
 
                 Randomizer randomizer = new Randomizer();
                 Randomizer.clearRandomizedCorrections();
@@ -234,7 +216,6 @@ public class IDE extends AnchorPane {
                                 editorStorage.getChildren().add(row);
                             });
 
-                            rowBuffer.add(row);
                             line.clear();
                             rowID++;
                             continue;
@@ -243,12 +224,12 @@ public class IDE extends AnchorPane {
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 } finally {
-                    isLoading = false;
+                    isLoading.setValue(false);
                 }
             }
         };
 
-        if (!isLoading) {
+        if (!isLoading.getValue()) {
             editorStorage.getChildren().clear();
             new Thread(task).start();
         }
@@ -271,7 +252,7 @@ public class IDE extends AnchorPane {
     }
 
     public boolean getIfLoading() {
-        return isLoading;
+        return isLoading.getValue();
     }
 
     public AnchorPane getExplorerAnchor() {
@@ -281,4 +262,9 @@ public class IDE extends AnchorPane {
     public void setProblems(HashMap<Integer, String> problems) {
         this.problems = problems;
     }
+
+    public void setLoadedCode(int question_id) {
+        this.loadedCode = question_id;
+    }
+
 }

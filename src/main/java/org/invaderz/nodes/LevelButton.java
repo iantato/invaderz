@@ -71,6 +71,7 @@ public class LevelButton extends Button {
 
                     setId("selectedLevel");
                     parent.loadCode(question_id);
+                    parent.setLoadedCode(question_id);
                 }
             }
         }

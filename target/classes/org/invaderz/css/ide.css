@@ -2,6 +2,7 @@
     -fx-padding: 0;
     -fx-margin: 0;
     -fx-box-border: transparent;
+    -fx-focus-color: transparent;
 }
 
 .split-pane *.split-pane-divider {
@@ -13,8 +14,43 @@
     -fx-background-color: #192227;
 }
 
+#explorer > .scroll-bar:vertical .track,
+#explorer > .scroll-bar:vertical .increment-button,
+#explorer > .scroll-bar:vertical .decrement-button,
+#explorer > .scroll-bar:horizontal .track,
+#explorer > .scroll-bar:horizontal .increment-button,
+#explorer > .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: #192227;
+}
+
 #editor > .viewport {
     -fx-background-color: #263238;
+}
+
+#editor > .scroll-bar:vertical .track,
+#editor > .scroll-bar:vertical .increment-button,
+#editor > .scroll-bar:vertical .decrement-button,
+#editor > .scroll-bar:horizontal .track,
+#editor > .scroll-bar:horizontal .increment-button,
+#editor > .scroll-bar:horizontal .decrement-button,
+#editor > .corner {
+    -fx-background-color: #263238;
+}
+
+#editor > .corner {
+    -fx-border-color: #263238;
+}
+
+.scroll-bar {
+    -fx-pref-width: 15;
+    -fx-pref-height: 15;
+    -fx-border-radius: 0;
+
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #484c54;
+    -fx-border-radius: 0;
 }
 
 .editorTop {
@@ -66,3 +102,24 @@
     -fx-text-fill: #c3e88d;
     -fx-font-weight: 800;
 }
+
+
+/* 
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 10.0 0.0 0.0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow{
+   -fx-shape : " ";    
+   -fx-padding :0.15em 0.0;
+}
+
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow{
+   -fx-shape : " ";    
+   -fx-padding :0.0 0.15em;
+} */

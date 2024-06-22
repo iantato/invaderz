@@ -8,8 +8,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -36,7 +36,8 @@
                            <children>
                               <FlowPane alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0" styleClass="editorTop" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Button mnemonicParsing="false" onMouseClicked="#resetEditor" text="RESET">
+                                    <Label />
+                                    <Button mnemonicParsing="false" onMouseClicked="#rerandomize" text="RE-RANDOMIZE">
                                        <FlowPane.margin>
                                           <Insets right="5.0" />
                                        </FlowPane.margin>
@@ -90,22 +91,6 @@
                         </AnchorPane>
                       <AnchorPane maxHeight="300.0" minHeight="60.0" minWidth="0.0" prefHeight="120.0" prefWidth="160.0">
                            <children>
-                              <Pane maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #192227;" styleClass="terminalTop" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <Label layoutX="14.0" layoutY="12.0" text="TERMINAL" textFill="WHITE">
-                                       <font>
-                                          <Font name="Inter Regular" size="12.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
-                                    </Label>
-                                    <Line endX="-41.0" layoutX="115.0" layoutY="30.0" startX="-100.0" stroke="#66a19d" />
-                                 </children>
-                                 <cursor>
-                                    <Cursor fx:constant="DEFAULT" />
-                                 </cursor>
-                              </Pane>
                               <ScrollPane id="terminal" fitToHeight="true" fitToWidth="true" layoutX="-53.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                                  <content>
                                     <VBox fx:id="terminalStorage" prefHeight="200.0" prefWidth="100.0">
@@ -125,6 +110,33 @@
                                     </VBox>
                                  </content>
                               </ScrollPane>
+                              <BorderPane layoutX="44.0" layoutY="-86.0" prefHeight="40.0" prefWidth="420.0" styleClass="terminalTop" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <left>
+                                    <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label text="TERMINAL" textFill="WHITE">
+                                             <font>
+                                                <Font name="Inter Regular" size="12.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                          <Line endX="-41.0" startX="-100.0" stroke="#66a19d" />
+                                       </children>
+                                    </VBox>
+                                 </left>
+                                 <right>
+                                    <Label fx:id="stateDisplay" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="17.0" prefWidth="78.0" textAlignment="RIGHT" textFill="#546e7a" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font name="Inter Regular" size="12.0" />
+                                       </font>
+                                       <BorderPane.margin>
+                                          <Insets right="20.0" />
+                                       </BorderPane.margin>
+                                    </Label>
+                                 </right>
+                              </BorderPane>
                            </children></AnchorPane>
                     </items>
                   </SplitPane>

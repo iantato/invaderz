@@ -29,6 +29,7 @@ import javafx.scene.text.Text;
 public class CodeRow extends HBox {
 
     private CodeRow instance;
+    IDE parent = IDE.getInstance();
     private Randomizer randomizer;
 
     private String language;
@@ -52,8 +53,6 @@ public class CodeRow extends HBox {
 
     @FXML
     public void setSelectedRow(MouseEvent mouseEvent) {
-        
-        IDE parent = IDE.getInstance();
 
         if (parent != null) {
             if (parent.lookup("#selectedRow") != null) {
@@ -134,10 +133,15 @@ public class CodeRow extends HBox {
                             case KeyCode.LEFT:
 
                                 caretPosition = codeNode.getCaretPosition();
+
                                 if (caretPosition == 0 && getChildren().indexOf(codeNode) != 2) {
                                     TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
                                     prevNode.requestFocus();
-                                    prevNode.positionCaret(prevNode.getText().length() - 1);
+                                    if (codeNode.getText().length() == 0) {
+                                        prevNode.positionCaret(prevNode.getText().length());
+                                    } else {
+                                        prevNode.positionCaret(prevNode.getText().length() - 1);
+                                    }
                                 }
 
                                 break;
@@ -150,9 +154,12 @@ public class CodeRow extends HBox {
                                     
                                     TextField nextNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) + 1);
                                     nextNode.requestFocus();
-                                    nextNode.positionCaret(1);
+                                    if (codeNode.getText().length() == 0) {
+                                        nextNode.positionCaret(0);
+                                    } else {
+                                        nextNode.positionCaret(1);
+                                    }
                                 }
-
                                 break;
 
                             case KeyCode.UP:
@@ -185,6 +192,48 @@ public class CodeRow extends HBox {
                                 }
 
                                 break;
+
+                            case KeyCode.BACK_SPACE:
+
+                                caretPosition = codeNode.getCaretPosition();
+
+                                if (!randomizer.checkRandomString(word)) {
+                                    TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
+                                    
+                                    if (prevNode.getStyleClass().contains("randomized") && caretPosition == 0  
+                                        && getChildren().indexOf(codeNode) != 2 & prevNode.getText().length() > 0) {
+                                        String randomizedWord = prevNode.getText();
+                                        
+                                        prevNode.setText(randomizedWord.substring(0, prevNode.getText().length() - 1));
+                                        prevNode.requestFocus();
+                                        prevNode.positionCaret(prevNode.getText().length());
+                                    }
+
+                                    keyEvent.consume();
+                                } else {
+                                    
+                                }
+                                break;
+                            
+                            // case KeyCode.BACK_SPACE:
+                                
+                            //     caretPosition = codeNode.getCaretPosition();
+                            //     editorStorage = parent.lookup("#selectedRow").getParent();
+
+                            //     if (caretPosition == 0 && getChildren().indexOf(codeNode) != 2) {
+                                    
+                            //         TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
+                            //         if (caretPosition == 0 && prevNode.getStyleClass().contains("randomized")) {
+                            //             prevNode.setText(prevNode.getText().substring(0, prevNode.getText().length() - 1));
+                            //             prevNode.requestFocus();
+                            //             prevNode.positionCaret(prevNode.getText().length());
+                            //         } else {
+                            //             keyEvent.consume();
+                            //         }
+                            //         // CodeRow prevRow = (CodeRow) editorStorage.getChildrenUnmodifiable().get(currentRow  1);
+                            //     }
+
+                            //     break;
                             
                             default:
 
