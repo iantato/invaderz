@@ -119,132 +119,8 @@ public class CodeRow extends HBox {
                 codeNode.setPrefWidth(getTextMeasure(word) + 0.5);
                 codeNode.setMinWidth(getTextMeasure(word) + 0.5);
                 codeNode.getStyleClass().add("codeField");
-                codeNode.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-                    @Override
-                    public void handle(KeyEvent keyEvent) {
-
-                        IDE parent = IDE.getInstance();
-
-                        Parent editorStorage;
-                        int caretPosition;
-                        int currentRow;
-                        
-                        switch (keyEvent.getCode()) {
-                            case KeyCode.LEFT:
-
-                                caretPosition = codeNode.getCaretPosition();
-
-                                if (caretPosition == 0 && getChildren().indexOf(codeNode) != 2) {
-                                    TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
-                                    prevNode.requestFocus();
-                                    if (codeNode.getText().length() == 0) {
-                                        prevNode.positionCaret(prevNode.getText().length());
-                                    } else {
-                                        prevNode.positionCaret(prevNode.getText().length() - 1);
-                                    }
-                                }
-
-                                break;
-                        
-                            case KeyCode.RIGHT:
-
-                                caretPosition = codeNode.getCaretPosition();
-                                if (caretPosition == codeNode.getText().length() && 
-                                    getChildren().indexOf(codeNode) != getChildren().size() - 1) {
-                                    
-                                    TextField nextNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) + 1);
-                                    nextNode.requestFocus();
-                                    if (codeNode.getText().length() == 0) {
-                                        nextNode.positionCaret(0);
-                                    } else {
-                                        nextNode.positionCaret(1);
-                                    }
-                                }
-                                break;
-
-                            case KeyCode.UP:
-
-                                caretPosition = codeNode.getCaretPosition();
-                                editorStorage = parent.lookup("#selectedRow").getParent();
-
-                                currentRow = editorStorage.getChildrenUnmodifiable().indexOf(instance);
-                                
-                                if (currentRow != 0) {
-
-                                    CodeRow prevRow = (CodeRow) editorStorage.getChildrenUnmodifiable().get(currentRow - 1);
-                                    prevRow.setSelectedRow();
-                                }
-                                
-                                break;
-                            
-                            case KeyCode.DOWN:
-
-                                caretPosition = codeNode.getCaretPosition();
-                                editorStorage = parent.lookup("#selectedRow").getParent();
-
-                                currentRow = editorStorage.getChildrenUnmodifiable().indexOf(instance);
-
-                                if (currentRow != editorStorage.getChildrenUnmodifiable().size() - 1) {
-                                    
-                                    CodeRow nextRow = (CodeRow) editorStorage.getChildrenUnmodifiable().get(currentRow + 1);
-                                    nextRow.setSelectedRow();
-
-                                }
-
-                                break;
-
-                            case KeyCode.BACK_SPACE:
-
-                                caretPosition = codeNode.getCaretPosition();
-
-                                if (!randomizer.checkRandomString(word)) {
-                                    TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
-                                    
-                                    if (prevNode.getStyleClass().contains("randomized") && caretPosition == 0  
-                                        && getChildren().indexOf(codeNode) != 2 & prevNode.getText().length() > 0) {
-                                        String randomizedWord = prevNode.getText();
-                                        
-                                        prevNode.setText(randomizedWord.substring(0, prevNode.getText().length() - 1));
-                                        prevNode.requestFocus();
-                                        prevNode.positionCaret(prevNode.getText().length());
-                                    }
-
-                                    keyEvent.consume();
-                                } else {
-                                    
-                                }
-                                break;
-                            
-                            // case KeyCode.BACK_SPACE:
-                                
-                            //     caretPosition = codeNode.getCaretPosition();
-                            //     editorStorage = parent.lookup("#selectedRow").getParent();
-
-                            //     if (caretPosition == 0 && getChildren().indexOf(codeNode) != 2) {
-                                    
-                            //         TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
-                            //         if (caretPosition == 0 && prevNode.getStyleClass().contains("randomized")) {
-                            //             prevNode.setText(prevNode.getText().substring(0, prevNode.getText().length() - 1));
-                            //             prevNode.requestFocus();
-                            //             prevNode.positionCaret(prevNode.getText().length());
-                            //         } else {
-                            //             keyEvent.consume();
-                            //         }
-                            //         // CodeRow prevRow = (CodeRow) editorStorage.getChildrenUnmodifiable().get(currentRow  1);
-                            //     }
-
-                            //     break;
-                            
-                            default:
-
-                                if (!randomizer.checkRandomString(word)) {
-                                    keyEvent.consume();
-                                }
-                                break;
-                        }
-                    }
-                });
-
+                setKeyListeners(codeNode, word);
+                
                 codeNode.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
@@ -297,4 +173,113 @@ public class CodeRow extends HBox {
             System.out.println(e.getMessage());
         }
     }
+
+    private void setKeyListeners(TextField codeNode, String word) {
+        codeNode.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+
+                IDE parent = IDE.getInstance();
+
+                Parent editorStorage;
+                int caretPosition;
+                int currentRow;
+                
+                switch (keyEvent.getCode()) {
+                    case KeyCode.LEFT:
+
+                        caretPosition = codeNode.getCaretPosition();
+
+                        if (caretPosition == 0 && getChildren().indexOf(codeNode) != 2) {
+                            TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
+                            prevNode.requestFocus();
+                            if (codeNode.getText().length() == 0) {
+                                prevNode.positionCaret(prevNode.getText().length());
+                            } else {
+                                prevNode.positionCaret(prevNode.getText().length() - 1);
+                            }
+                        }
+
+                        break;
+                
+                    case KeyCode.RIGHT:
+
+                        caretPosition = codeNode.getCaretPosition();
+                        if (caretPosition == codeNode.getText().length() && 
+                            getChildren().indexOf(codeNode) != getChildren().size() - 1) {
+                            
+                            TextField nextNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) + 1);
+                            nextNode.requestFocus();
+                            if (codeNode.getText().length() == 0) {
+                                nextNode.positionCaret(0);
+                            } else {
+                                nextNode.positionCaret(1);
+                            }
+                        }
+                        break;
+
+                    case KeyCode.UP:
+
+                        caretPosition = codeNode.getCaretPosition();
+                        editorStorage = parent.lookup("#selectedRow").getParent();
+
+                        currentRow = editorStorage.getChildrenUnmodifiable().indexOf(instance);
+                        
+                        if (currentRow != 0) {
+
+                            CodeRow prevRow = (CodeRow) editorStorage.getChildrenUnmodifiable().get(currentRow - 1);
+                            prevRow.setSelectedRow();
+                        }
+                        
+                        break;
+                    
+                    case KeyCode.DOWN:
+
+                        caretPosition = codeNode.getCaretPosition();
+                        editorStorage = parent.lookup("#selectedRow").getParent();
+
+                        currentRow = editorStorage.getChildrenUnmodifiable().indexOf(instance);
+
+                        if (currentRow != editorStorage.getChildrenUnmodifiable().size() - 1) {
+                            
+                            CodeRow nextRow = (CodeRow) editorStorage.getChildrenUnmodifiable().get(currentRow + 1);
+                            nextRow.setSelectedRow();
+
+                        }
+
+                        break;
+
+                    case KeyCode.BACK_SPACE:
+
+                        caretPosition = codeNode.getCaretPosition();
+
+                        if (!randomizer.checkRandomString(word)) {
+                            TextField prevNode = (TextField) getChildren().get(getChildren().indexOf(codeNode) - 1);
+                            
+                            if (prevNode.getStyleClass().contains("randomized") && caretPosition == 0  
+                                && getChildren().indexOf(codeNode) != 2 & prevNode.getText().length() > 0) {
+                                String randomizedWord = prevNode.getText();
+                                
+                                prevNode.setText(randomizedWord.substring(0, prevNode.getText().length() - 1));
+                                prevNode.requestFocus();
+                                prevNode.positionCaret(prevNode.getText().length());
+                            }
+
+                            keyEvent.consume();
+                        } else {
+                            
+                        }
+                        break;
+                    
+                    default:
+
+                        if (!randomizer.checkRandomString(word)) {
+                            keyEvent.consume();
+                        }
+                        break;
+                }
+            }
+        });
+    }
+
 }
